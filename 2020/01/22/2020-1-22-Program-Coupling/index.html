@@ -1,0 +1,171 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5"><title>程序的耦合 | Cutealien</title><meta name="description" content="对程序耦合、解耦的介绍，以及对JDBC操作的解释。"><meta name="keywords" content="JDBC,程序耦合"><meta name="author" content="Amor-Joo,hakim15170612044@outlook.com"><meta name="copyright" content="Amor-Joo"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="https://hm.baidu.com"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin><link rel="preconnect" href="//busuanzi.ibruce.info"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="程序的耦合"><meta name="twitter:description" content="对程序耦合、解耦的介绍，以及对JDBC操作的解释。"><meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/amor-joo/amor-joo.github.io@master/images/blog_cover/20-01-22_Program-Coupling.png"><meta property="og:type" content="article"><meta property="og:title" content="程序的耦合"><meta property="og:url" content="https://cutealien.cn/2020/01/22/2020-1-22-Program-Coupling/"><meta property="og:site_name" content="Cutealien"><meta property="og:description" content="对程序耦合、解耦的介绍，以及对JDBC操作的解释。"><meta property="og:image" content="https://cdn.jsdelivr.net/gh/amor-joo/amor-joo.github.io@master/images/blog_cover/20-01-22_Program-Coupling.png"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = 'false'
+var t = Cookies.get("theme");
+if (autoChangeMode == '1'){
+const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
+const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
+const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+if (t === undefined){
+  if (isLightMode) activateLightMode()
+  else if (isDarkMode) activateDarkMode()
+  else if (isNotSpecified || hasNoSupport){
+    console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+    now = new Date();
+    hour = now.getHours();
+    isNight = hour < 6 || hour >= 18
+    isNight ? activateDarkMode() : activateLightMode()
+}
+} else if (t == 'light') activateLightMode()
+else activateDarkMode()
+
+
+} else if (autoChangeMode == '2'){
+  now = new Date();
+  hour = now.getHours();
+  isNight = hour < 6 || hour >= 18
+  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode() 
+} else {
+  if ( t == 'dark' ) activateDarkMode()
+  else if ( t == 'light') activateLightMode()
+}
+
+function activateDarkMode(){
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
+  }
+}
+function activateLightMode(){
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null){
+  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
+  }
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css"><link rel="canonical" href="https://cutealien.cn/2020/01/22/2020-1-22-Program-Coupling/"><link rel="prev" title="本博客的介绍说明" href="https://cutealien.cn/2020/01/25/2020-1-25-Introduction-of-blog/"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?7966e493570981149e93f90e83c861c1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容:${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":100,"cookieDomain":"https://cutealien.cn/","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    title: 'Snackbar.bookmark.title',
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: true,
+  copyright: {"languages":{"author":"作者: Amor-Joo","link":"链接: https://cutealien.cn/2020/01/22/2020-1-22-Program-Coupling/","source":"来源: Cutealien","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  ClickShowText: {"text":"富强,民主,文明,和谐,自由,平等,公正,法治,爱国,敬业,诚信,友善","fontSize":"15px"},
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: {"bookmark":{"title":"Snackbar.bookmark.title","message_prev":"按","message_next":"键将本页加入书签"},"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#2d3035","position":"top-center"},
+  baiduPush: false,
+  isHome: false,
+  isPost: true
+  
+}</script><meta name="generator" content="Hexo 4.2.0"></head><body><header> <div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">Cutealien</a></span><span class="toggle-menu pull_right close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-heartbeat" aria-hidden="true"></i><span> 清单</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/gallery/"><i class="fa-fw fa fa-picture-o"></i><span> 照片</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div></div></span><span class="pull_right" id="search_button"><a class="site-page social-icon search"><i class="fa fa-search fa-fw"></i><span> 搜索</span></a></span></div></header><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="https://cdn.jsdelivr.net/gh/amor-joo/amor-joo.github.io@master/img/avatar.png" onerror="onerror=null;src='https://cdn.jsdelivr.net/gh/amor-joo/amor-joo.github.io@master/img/friend_404.gif'" alt="avatar"></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">5</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">8</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">4</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-heartbeat" aria-hidden="true"></i><span> 清单</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page" href="/gallery/"><i class="fa-fw fa fa-picture-o"></i><span> 照片</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div></div></div><div id="mobile-sidebar-toc"><div class="toc_mobile_headline">目录</div><div class="sidebar-toc__content"><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#概念"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">概念</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#耦合"><span class="toc_mobile_items-number">1.1.</span> <span class="toc_mobile_items-text">耦合</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#解耦"><span class="toc_mobile_items-number">1.2.</span> <span class="toc_mobile_items-text">解耦</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-1"><a class="toc_mobile_items-link" href="#案例"><span class="toc_mobile_items-number">2.</span> <span class="toc_mobile_items-text">案例</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-2"><a class="toc_mobile_items-link" href="#编写JDBC的工程代码来分析程序的耦合"><span class="toc_mobile_items-number">2.1.</span> <span class="toc_mobile_items-text">编写JDBC的工程代码来分析程序的耦合</span></a></li></ol></li></ol></div></div></div><div id="body-wrap"><div id="web_bg" data-type="photo"></div><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true">     </i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#概念"><span class="toc-number">1.</span> <span class="toc-text">概念</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#耦合"><span class="toc-number">1.1.</span> <span class="toc-text">耦合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解耦"><span class="toc-number">1.2.</span> <span class="toc-text">解耦</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#案例"><span class="toc-number">2.</span> <span class="toc-text">案例</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#编写JDBC的工程代码来分析程序的耦合"><span class="toc-number">2.1.</span> <span class="toc-text">编写JDBC的工程代码来分析程序的耦合</span></a></li></ol></li></ol></div></div></div><main id="content-outer"><div id="top-container" style="background-image: url(https://cdn.jsdelivr.net/gh/amor-joo/amor-joo.github.io@master/images/blog_cover/20-01-22_Program-Coupling.png)"><div id="post-info"><div id="post-title"><div class="posttitle">程序的耦合</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 发表于 2020-01-22<span class="post-meta__separator">|</span><i class="fa fa-history fa-fw" aria-hidden="true"></i> 更新于 2020-08-12</time><span class="post-meta__separator">|</span><span><i class="fa fa-inbox post-meta__icon fa-fw" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/Mybatis%E5%AD%A6%E4%B9%A0/">Mybatis学习</a></span><div class="post-meta-wordcount"><i class="fa fa-file-word-o post-meta__icon fa-fw" aria-hidden="true"></i><span>字数总计:</span><span class="word-count">787</span><span class="post-meta__separator">|</span><i class="fa fa-clock-o post-meta__icon fa-fw" aria-hidden="true"></i><span>阅读时长: 2 分钟</span><div class="post-meta-pv-cv"><span class="post-meta__separator">|</span><span><i class="fa fa-eye post-meta__icon fa-fw" aria-hidden="true"> </i>阅读量:</span><span id="busuanzi_value_page_pv"></span><span class="post-meta__separator">|</span><i class="fa fa-comments-o post-meta__icon fa-fw" aria-hidden="true"></i><span>评论数:</span><a href="/2020/01/22/2020-1-22-Program-Coupling/#post-comment" itemprop="discussionUrl"><span class="valine-comment-count comment-count" data-xid="/2020/01/22/2020-1-22-Program-Coupling/" itemprop="commentCount"></span></a></div></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><html><head></head><body><h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><p class="indent_p">耦合性，也叫耦合度，是对模块间关联程序的度量。耦合的强弱取决于模块间结构和复杂性、调用模块的方式以及通过界面传递数据的多少。模块间的耦合度是指模块之间的依赖关系，包括控制关系、调用关系、数据传递关系。模块间联系越多，其耦合性越强，同时表明其独立性越差（减低耦合性，可以提高其独立性）。</p>
+
+<h2 id="耦合"><a href="#耦合" class="headerlink" title="耦合"></a>耦合</h2><p class="indent_p">在软件工程中，耦合指的就是对象之间的依赖性。对象之间的耦合越高，维护成本越高。因此对象的设计应使类和构件的耦合最小、软件设计中通常用耦合度和内聚度作为衡量模块独立程度的标准。划分模块的一个准则就是 <b><u>高内聚低耦合</u></b> 。</p>
+
+<blockquote>
+<p class="indent_p">耦合包括两个方面：（Java中）</p>
+<p class="indent_2_p">1. <u>类之间的耦合</u></p>
+<p class="indent_2_p">2. <u>方法之间的耦合</u></p>
+
+</blockquote>
+<h2 id="解耦"><a href="#解耦" class="headerlink" title="解耦"></a>解耦</h2><p class="indent_p">解耦是指降低程序间的依赖关系。</p>
+
+<p class="indent_p">而我们在实际的开发中，应该做到： <u><b>编译期不依赖，运行时依赖</b></u>。</p>
+
+<p class="indent_p">所以，</p>
+
+<blockquote>
+<p class="indent_p">解耦的思路是：</p>
+<p class="indent_2_p">第一步 - 使用 <b>反射</b> 来创建对象，而避免使用new关键字</p>
+<p class="indent_2_p">第二步 - 通过 <b>读取配置文件</b> ，来获取要创建的对象的全限定类名</p>
+
+</blockquote>
+<h1 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h1><h2 id="编写JDBC的工程代码来分析程序的耦合"><a href="#编写JDBC的工程代码来分析程序的耦合" class="headerlink" title="编写JDBC的工程代码来分析程序的耦合"></a>编写JDBC的工程代码来分析程序的耦合</h2><p class="indent_p">下面是一种JDBC操作的代码：</p>
+
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdbcDemo1</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1.注册驱动</span></span><br><span class="line">        DriverManager.registerDriver(<span class="keyword">new</span> com.mysql.jdbc.Driver());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2.创建连接</span></span><br><span class="line">        Connection connection = DriverManager.getConnection(<span class="string">"jdbc:mysql://localhost:3306/ssm_spring"</span>,<span class="string">"root"</span>,<span class="string">"root"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3.获取操作数据库的预处理对象</span></span><br><span class="line">        PreparedStatement preparedStatement = connection.prepareStatement(<span class="string">"select * from account"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 4.执行SQL，得到结果集</span></span><br><span class="line">        ResultSet resultSet = preparedStatement.executeQuery();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 5.遍历结果集</span></span><br><span class="line">        <span class="keyword">while</span>(resultSet.next()){</span><br><span class="line">            System.out.println(resultSet.getString(<span class="string">"name"</span>));</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 6.释放资源</span></span><br><span class="line">        resultSet.close();</span><br><span class="line">        preparedStatement.close();</span><br><span class="line">        connection.close();</span><br><span class="line"></span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></div>
+<p class="indent_p">在注册驱动这一步骤当中，代码：</p>
+
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1.注册驱动</span></span><br><span class="line">DriverManager.registerDriver(<span class="keyword">new</span> com.mysql.jdbc.Driver());</span><br></pre></td></tr></tbody></table></figure></div>
+<p>当程序的库依赖没有这个驱动类时，该程序将<strong>无法正常编译</strong>，所以应当使用：</p>
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1.注册驱动</span></span><br><span class="line">Class.forName(<span class="string">"com.mysql.jdbc.Driver"</span>);</span><br></pre></td></tr></tbody></table></figure></div>
+<p>这样在同样没有这个驱动类时，程序只是<strong>出现异常</strong>。</p>
+<p class="indent_p">这样做就降低了程序间的依赖关系，实现了解耦。</p>
+
+<p class="indent_p">不过呢，最好还是用配置文件的方式，从中读取驱动的名字，然后再加载驱动，这样就更能降低依赖关系，使代码更容易维护！</p>
+
+<p class="indent_p">所以，标准的JDBC操作的步骤应该为：</p>
+
+<div class="code-area-wrap"><div class="highlight-tools"><i class="fa fa-angle-down code-expand" aria-hidden="true"></i><div class="code_lang">java</div><div class="copy-notice"></div><i class="fa fa-clipboard" aria-hidden="true"></i></div><figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">// 1.导入库文件</span></span><br><span class="line"><span class="keyword">import</span> java.sql.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JDBC</span> </span>{</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span>  </span>{</span><br><span class="line">        Connection conn = <span class="keyword">null</span>;</span><br><span class="line">        PreparedStatement psmt = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> {</span><br><span class="line">            <span class="comment">// 2.加载数据库驱动</span></span><br><span class="line">            Class.forName(<span class="string">"com.mysql.jdbc.Driver"</span>).newInstance();</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 3.创建连接</span></span><br><span class="line">            conn = DriverManager.getConnection(<span class="string">"jdbc:mysql://localhost:3306/mybatis"</span>,<span class="string">"root"</span>,<span class="string">"root"</span>);</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 3.获取操作数据库的预处理对象</span></span><br><span class="line">            psmt = connection.prepareStatement(<span class="string">"select * from account"</span>);</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 4.执行SQL，得到结果集</span></span><br><span class="line">            ResultSet rs = preparedStatement.executeQuery();</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 5.遍历结果集</span></span><br><span class="line">            <span class="keyword">while</span>(rs.next()) { </span><br><span class="line">                System.out.println(rs.getString(<span class="string">"name"</span>)); </span><br><span class="line">            }</span><br><span class="line"></span><br><span class="line">            rs.close();</span><br><span class="line">        } <span class="keyword">catch</span> (Exception e) {</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        } <span class="keyword">finally</span> {</span><br><span class="line">            <span class="keyword">try</span> {</span><br><span class="line">                <span class="keyword">if</span>(conn != <span class="keyword">null</span>)</span><br><span class="line">                    conn.close();</span><br><span class="line">                <span class="keyword">if</span>(psmt != <span class="keyword">null</span>)</span><br><span class="line">                    psmt.close();</span><br><span class="line">            } <span class="keyword">catch</span>(Exception ex) {</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></div>
+<style type="text/css">
+    .indent_p {
+        text-indent: 2em;
+    }
+    .indent_2_p {
+        text-indent: 4em;
+    }
+    /* <p class="indent_p"> */
+</style></body></html></div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:hakim15170612044@outlook.com">Amor-Joo</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://cutealien.cn/2020/01/22/2020-1-22-Program-Coupling/">https://cutealien.cn/2020/01/22/2020-1-22-Program-Coupling/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://cutealien.cn">Cutealien</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/JDBC/">JDBC    </a><a class="post-meta__tags" href="/tags/%E7%A8%8B%E5%BA%8F%E8%80%A6%E5%90%88/">程序耦合    </a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/amor-joo/amor-joo.github.io@master/images/blog_cover/20-01-22_Program-Coupling.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-button button--primary button--animated"> <i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="lazyload post-qr-code__img" src="https://cdn.jsdelivr.net/gh/amor-joo/amor-joo.github.io@master/img/wechat.png" alt="微信"><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="lazyload post-qr-code__img" src="https://cdn.jsdelivr.net/gh/amor-joo/amor-joo.github.io@master/img/alipay.png" alt="支付宝"><div class="post-qr-code__desc">支付宝</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="prev-post pull-full"><a href="/2020/01/25/2020-1-25-Introduction-of-blog/"><img class="prev_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/amor-joo/amor-joo.github.io@master/images/blog_cover/hexo.jpg" onerror="onerror=null;src='https://cdn.jsdelivr.net/gh/amor-joo/amor-joo.github.io@master/img/404.jpg'"><div class="label">上一篇</div><div class="prev_info"><span>本博客的介绍说明</span></div></a></div></nav><hr><div id="post-comment"><div class="comment_headling"><i class="fa fa-comments fa-fw" aria-hidden="true"></i><span> 评论</span></div><div class="vcomment" id="vcomment"></div><script src="https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js"></script><script>var notify = false == true ? true : false;
+var verify = true == true ? true : false;
+var GUEST_INFO = ['nick','mail','link'];
+var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+  return GUEST_INFO.indexOf(item) > -1
+});
+guest_info = guest_info.length == 0 ? GUEST_INFO :guest_info;
+
+window.valine = new Valine({
+  el:'#vcomment',
+  notify:notify,
+  verify:verify,
+  appId:'31l3Cd1Ko3GT1nAMFxroB3W3-gzGzoHsz',
+  appKey:'4S35aGM1Vwi9NN8mz7sTENm4',
+  placeholder:'少侠，不留下点什么吗？',
+  avatar:'mp',
+  guest_info:guest_info,
+  pageSize:'6',
+  lang:'zh-cn',
+  recordIP: true
+});</script></div></div></main><footer id="footer" style="background-image: url(https://cdn.jsdelivr.net/gh/amor-joo/amor-joo.github.io@master/images/blog_cover/20-01-22_Program-Coupling.png)" data-type="photo"><div id="footer-wrap"><div class="copyright"><span>Copyright </span><span>&copy;2019 - 2020 By Amor-Joo</span></div><div class="framework-info"><span>Powered By </span><a href="http://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换" target="_self">繁</a><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><a id="to_comment" href="#post-comment" title="直达评论"><i class="scroll_to_comment fa fa-comments">  </i></a><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  CommonHTML: {
+    linebreaks: { automatic: true, width: "90% container" }
+  },
+  "HTML-CSS": { 
+    linebreaks: { automatic: true, width: "90% container" }
+  },
+  "SVG": { 
+    linebreaks: { automatic: true, width: "90% container" }
+  }
+});
+</script><script type="text/x-mathjax-config">MathJax.Hub.Queue(function() {
+  var all = MathJax.Hub.getAllJax(), i;
+  for (i=0; i < all.length; i += 1) {
+    all[i].SourceElement().parentNode.className += ' has-jax';
+  }
+});
+</script><script src="https://cdn.jsdelivr.net/npm/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script id="ribbon_piao" mobile="true" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/js/piao.js"></script><script src="https://cdn.jsdelivr.net/npm/activate-power-mode/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false; 
+document.body.addEventListener('input', POWERMODE);
+</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async=""></script><script src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/js/ClickShowText.js"></script><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章"></div></div></div><hr><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a href="https://github.com/wzpan/hexo-generator-search" target="_blank" rel="noopener" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div></body></html>
